@@ -1,3 +1,5 @@
+package streams;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
@@ -19,7 +21,7 @@ class Escribiendo{
 
     public void writeInFile(String text) {
         try {
-            FileWriter output = new FileWriter("./example-Out.txt", true);
+            FileWriter output = new FileWriter("streams/example-Out.txt", true);
 
             for (int i = 0; i < text.length(); i++) {
                 output.write(text.charAt(i));
