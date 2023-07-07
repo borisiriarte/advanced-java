@@ -1,4 +1,4 @@
-package streams;
+package streams_1;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class Acceso_Fichero {
 class Leer_Fichero {
     public void read_file() {
         try {
-            FileReader input = new FileReader("streams/example.txt");
+            FileReader input = new FileReader("streams_1/example.txt");
 
             int redFile = 0;
 

@@ -1,4 +1,4 @@
-package streams;
+package streams_1;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,7 +21,7 @@ class Escribiendo{
 
     public void writeInFile(String text) {
         try {
-            FileWriter output = new FileWriter("streams/example-Out.txt", true);
+            FileWriter output = new FileWriter("streams_1/example-Out.txt", true);
 
             for (int i = 0; i < text.length(); i++) {
                 output.write(text.charAt(i));
