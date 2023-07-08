@@ -9,7 +9,7 @@ public class ReadWriteFiles {
     public static void main(String[] args) {
         try {
             int counter = 0;
-            int input_data[] = new int[70506];
+            int[] input_data = new int[70506];
             boolean file_end = false;
             FileInputStream red_file = new FileInputStream("streams_3/imagen.jpg");
 
@@ -35,7 +35,7 @@ public class ReadWriteFiles {
         }
     }
 
-    static void create_file(int data_new_file[]) {
+    static void create_file(int[] data_new_file) {
 
         try {
             FileOutputStream new_file = new FileOutputStream("streams_3/imagen_copia.jpg");
