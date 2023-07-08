@@ -14,4 +14,11 @@ public class Couple <T>{
     public T getFirst() {
         return first;
     }
+
+    public static void printWorker(Couple< ? extends Employee> p ) {
+
+        Employee primero = p.getFirst();
+
+        System.out.println(primero);
+    }
 }
