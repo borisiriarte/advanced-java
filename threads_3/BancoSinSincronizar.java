@@ -1,8 +1,8 @@
 package threads_3;
 
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.spi.CurrencyNameProvider;
 
 public class BancoSinSincronizar {
     public static void main ( String[] args ) {
@@ -21,21 +21,24 @@ class Banco {
     private final double[] cuentas;
     private Lock cierreBanco = new ReentrantLock();
 
+    private Condition saldoSuficiente;
+
     public Banco ( ) {
         this.cuentas = new double[100];
 
         for( int i = 0; i < cuentas.length; i++ ) {
               cuentas[i] = 2000;
         }
+
+        saldoSuficiente = cierreBanco.newCondition();
     }
 
-    public void transferencia ( int cuentaOrigen, int cuentaDestino, double monto ) {
+    public void transferencia ( int cuentaOrigen, int cuentaDestino, double monto ) throws InterruptedException {
         cierreBanco.lock(); // Bloquea el acceso al banco para evitar que se realicen operaciones simultaneas
         try {
-            if(cuentas[cuentaOrigen] < monto){
-                System.out.println("Not possible to perform this action due to it does not have that amount of money. ACCOUNT: " + cuentaOrigen + "----BALANCE: " + cuentas[cuentaOrigen] + "....." + monto);
-            } else{
-                System.out.println("This action will be performed shortly" + cuentaOrigen + "----BALANCE: " + cuentas[cuentaOrigen] + "....." + monto);
+            while(cuentas[cuentaOrigen] < monto){
+                saldoSuficiente.await();
+
             } // Evalua si la cuenta origen tiene el dinero suficiente para realizar la transferencia
 
             System.out.println(Thread.currentThread());
@@ -47,8 +50,8 @@ class Banco {
             cuentas[cuentaDestino] += monto; //Deposito de la cuenta destino
 
             System.out.printf( " --Saldo total: %10.2f%n", getSaldo() );
-        } catch( Exception e ) {
-            e.printStackTrace();
+
+            saldoSuficiente.signalAll(); //Notifica a las cuentas que ya se pueden realizar operaciones
         } finally {
             cierreBanco.unlock();
         }
