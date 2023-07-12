@@ -10,15 +10,14 @@ import java.util.ArrayList;
 
 public class Uso_Threads {
     public static void main(String[] args) {
-        JFrame marco=new MarcoRebote();
+        JFrame marco = new MarcoRebote();
         marco.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         marco.setVisible(true);
     }
 }
 
 //1.- CLASE QUE IMPLEMENTA LA INTERFAZ RUNABLE
-class PelotaHilos implements Runnable{
-
+class PelotaHilos implements Runnable {
     private Pelota pelota;
     private Component componente;
 
@@ -53,13 +52,7 @@ class PelotaHilos implements Runnable{
         }
         System.out.println("Estado del hilo al terminar " + Thread.currentThread().isInterrupted());
     }
-
-
 }
-
-
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 
 //CLASE QUE SE ENCARGA DEL MOVIMIENTO DE LA PELOTA
 //TAMBN  SE ENCARGA DE QUE LA PELOTA REBOTE EN LOS BORDES
@@ -141,16 +134,16 @@ class LaminaPelota extends JPanel{
 
         super.paintComponent(g);
 
-        Graphics2D g2=(Graphics2D)g;
+        Graphics2D g2 = (Graphics2D)g;
 
-        for(Pelota b: pelotas){
+        for(Pelota b : pelotas){
 
             g2.fill(b.getShape());
         }
 
     }
 
-    private ArrayList<Pelota> pelotas=new ArrayList<Pelota>();
+    private ArrayList<Pelota> pelotas = new ArrayList<Pelota>();
 }
 
 
@@ -160,17 +153,17 @@ class MarcoRebote extends JFrame{
 
     public MarcoRebote(){
 
-        setBounds(600,300,400,350);
+        setBounds(600,300,600,350);
 
         setTitle ("Rebotes");
 
-        lamina=new LaminaPelota();
+        lamina = new LaminaPelota();
 
         add(lamina, BorderLayout.CENTER);
 
         JPanel laminaBotones=new JPanel();
 
-        ponerBoton(laminaBotones, "Dale!", new ActionListener(){
+        /*ponerBoton(laminaBotones, "Dale!", new ActionListener(){
 
             public void actionPerformed(ActionEvent evento){
                 comienza_el_juego();
@@ -192,7 +185,63 @@ class MarcoRebote extends JFrame{
             }
 
         });
+*/
 
+        bootstrap1 = new JButton("Hilo 1");
+        bootstrap1.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                comienza_el_juego(e);
+            }
+        });
+
+        bootstrap2 = new JButton("Hilo 2");
+        bootstrap2.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                comienza_el_juego(e);
+            }
+        });
+
+        bootstrap3 = new JButton("Hilo 3");
+        bootstrap3.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                comienza_el_juego(e);
+            }
+        });
+
+        stop1 = new JButton("Detener");
+        stop1.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                detener(e);
+            }
+        });
+
+        stop2 = new JButton("Detener");
+        stop2.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                detener(e);
+            }
+        });
+
+        stop3 = new JButton("Detener");
+        stop3.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed ( ActionEvent e ) {
+                detener(e);
+            }
+        });
+
+
+        laminaBotones.add( stop1);
+        laminaBotones.add( stop2);
+        laminaBotones.add( stop3);
+        laminaBotones.add( bootstrap1 );
+        laminaBotones.add( bootstrap2 );
+        laminaBotones.add( bootstrap3 );
         add(laminaBotones, BorderLayout.SOUTH);
     }
 
@@ -211,10 +260,12 @@ class MarcoRebote extends JFrame{
 
     //Añade pelota y la bota 1000 veces
 
-    Thread t;
+    Thread t1, t2, t3;
+
+    JButton bootstrap1, bootstrap2, bootstrap3, stop1, stop2, stop3;
     private final LaminaPelota lamina;
 
-    public void comienza_el_juego (){
+    public void comienza_el_juego ( ActionEvent e){
 
 
         Pelota pelota = new Pelota();
@@ -226,15 +277,30 @@ class MarcoRebote extends JFrame{
         Runnable r = new PelotaHilos(pelota,lamina);
 
         //4.-CREAMOS UNA TAREA...ESTE CONSTRUCTOR DE THREAD, PERMITE PASAR UN OBJ DE TIPO RUNNABLE
-        t = new Thread(r);
+        if(e.getSource().equals( bootstrap1 )){
+            t1 = new Thread(r);
+            t1.start();
+        } else if(e.getSource().equals( bootstrap2 )){
+            t2 = new Thread(r);
+            t2.start();
+        } else if(e.getSource().equals( bootstrap3)){
+            t3 = new Thread(r);
+            t3.start();
+        }
 
         //5.-LE DECIMOS QUR COMIENCE LA TAREA
-        t.start();
+
     }
 
-    public void detener() {
+    public void detener(ActionEvent e) {
         //t.stop();  //XXX está obsoleto
-        t.interrupt();  //este no se adapta al caso.
+        if(e.getSource().equals( stop1 )){
+            t1.interrupt();
+        } else if(e.getSource().equals( stop2 )){
+            t2.interrupt();
+        } else if(e.getSource().equals( stop3 )){
+            t3.interrupt();
+        }
     }
 }
 
