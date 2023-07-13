@@ -19,54 +19,42 @@ public class BancoSinSincronizar {
 
 class Banco {
     private final double[] cuentas;
-    private Lock cierreBanco = new ReentrantLock();
+    //private Lock cierreBanco = new ReentrantLock();
+    //private Condition saldoSuficiente;
 
-    private Condition saldoSuficiente;
-
-    public Banco ( ) {
+    public Banco () {
         this.cuentas = new double[100];
-
         for( int i = 0; i < cuentas.length; i++ ) {
               cuentas[i] = 2000;
         }
-
-        saldoSuficiente = cierreBanco.newCondition();
+        //saldoSuficiente = cierreBanco.newCondition();
     }
 
-    public void transferencia ( int cuentaOrigen, int cuentaDestino, double monto ) throws InterruptedException {
-        cierreBanco.lock(); // Bloquea el acceso al banco para evitar que se realicen operaciones simultaneas
-        try {
+    public synchronized void transferencia ( int cuentaOrigen, int cuentaDestino, double monto ) throws InterruptedException {
+        //cierreBanco.lock(); // Bloquea el acceso al banco para evitar que se realicen operaciones simultaneas
+        //try {
             while(cuentas[cuentaOrigen] < monto){
-                saldoSuficiente.await();
-
+                //saldoSuficiente.await();
+                wait();
             } // Evalua si la cuenta origen tiene el dinero suficiente para realizar la transferencia
 
             System.out.println(Thread.currentThread());
-
             cuentas[cuentaOrigen] -= monto; //Retiro de la cuenta origen
-
             System.out.printf( "%10.2f de %d a %d", monto, cuentaOrigen, cuentaDestino );
-
             cuentas[cuentaDestino] += monto; //Deposito de la cuenta destino
-
             System.out.printf( " --Saldo total: %10.2f%n", getSaldo() );
+            //saldoSuficiente.signalAll(); //Notifica a las cuentas que ya se pueden realizar operaciones
+        //} finally {
+            //cierreBanco.unlock();
+        //}
 
-            saldoSuficiente.signalAll(); //Notifica a las cuentas que ya se pueden realizar operaciones
-        } finally {
-            cierreBanco.unlock();
-        }
-
-
+        notifyAll();
     }
-
-
     public double getSaldo () {
         double total = 0;
-
         for( double cuenta : cuentas ) {
             total += cuenta;
         }
-
         return total;
     }
 }
@@ -82,7 +70,7 @@ class EjecucionTransferencias implements Runnable {
     }
 
     @Override
-    public void run ( ) {
+    public void run () {
         try {
             while(true) {
                 int iTo = ( int ) ( 100 * Math.random() );
@@ -94,9 +82,9 @@ class EjecucionTransferencias implements Runnable {
                     System.out.println( "Negative balance" );
                 }
             }
-
         } catch ( InterruptedException e ) {
             e.printStackTrace();
         }
     }
 }
+
